@@ -9,6 +9,8 @@ constexpr int SCREEN_HEIGHT = 600;
 #if 0
     [ ] Lazy Foo Tut 2: Getting an Image on the screen
     [ ] Make App class and encapsulate SDL items in to another class
+        [ ] Make Window Class
+        [ ] Make Event Manager
 #endif
 
 
