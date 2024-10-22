@@ -12,13 +12,14 @@ constexpr int SCREEN_HEIGHT = 600;
 #endif
 
 
+
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
     SDL_Window* window = nullptr;
 
     SDL_Surface* surface = nullptr;
 
-    SDL_Surface* _mu_ image = nullptr
+    SDL_Surface* _mu_ image = nullptr;
 
     // initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -26,12 +27,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
         return -1;
     }
     
-    window = SDL_CreateWindow(  "Lumina Engine", 
-                                    SDL_WINDOWPOS_UNDEFINED, 
-                                    SDL_WINDOWPOS_UNDEFINED, 
-                                    SCREEN_WIDTH, 
-                                    SCREEN_HEIGHT, 
-                                    SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow( "Lumina Engine", 
+                                SDL_WINDOWPOS_UNDEFINED, 
+                                SDL_WINDOWPOS_UNDEFINED, 
+                                SCREEN_WIDTH, 
+                                SCREEN_HEIGHT, 
+                                SDL_WINDOW_SHOWN);
     if(!window) {
             printf("Failed to create SDL Window.  Error: %s\n", SDL_GetError());
             return -1;
@@ -39,7 +40,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 
     surface = SDL_GetWindowSurface(window);
     
-
     SDL_FillRect(surface, nullptr, SDL_MapRGB(surface->format, 0xF0, 0xBA, 0xFF));
 
     SDL_UpdateWindowSurface(window);
