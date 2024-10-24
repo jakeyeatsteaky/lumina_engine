@@ -15,7 +15,13 @@
             [x] Fix Crash 
                 [x] Put print statements in Window and EventManager constructors.
                     to see where the crash is happening.
-        [ ] Import Logger into project
+        [x] Import Logger into project
+    
+    [ ] Implement Renderer Class
+
+    [ ] Continue SDL Tutorial to a natural stopping point
+
+    [ ] Start openGL implementation for 3D
 
 #endif
 
