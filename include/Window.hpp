@@ -10,9 +10,13 @@ class Window
 {
     std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> m_SDLWindow;
     bool Init();
+
+    
 public:
     Window();
     ~Window();
+    void update();
+    SDL_Window* Get();
     bool m_initialized;
 };
 
