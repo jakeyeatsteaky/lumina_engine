@@ -23,7 +23,7 @@ public:
 	static void Log(const T& msg, const Args&... args)
 	{
  		std::string timestamp = GetDateAndTime();
-		std::cout << "LOG ::" << timestamp << ": " << msg;
+		std::cout << "LOG :: " << timestamp << ": " << msg;
 		((std::cout << " " << args), ...);
 		std::cout << std::endl;
 	}

@@ -19,7 +19,11 @@ SDLInit::~SDLInit()
     SDL_Quit();
 }
 
-App::App() : m_window(nullptr), m_surface(nullptr)
+App::App() :    m_window(nullptr), 
+                m_eventManager(nullptr),
+                m_renderer(nullptr),
+                m_surface(nullptr), 
+                m_imageSurface(nullptr)
 {
     LOG_("Created App");
 }
@@ -49,6 +53,13 @@ bool App::Init()
         return ret;
 
 
+    m_renderer = std::make_unique<Renderer>();
+    if(!m_renderer->Load())
+    {
+        ERR("Error loading surfaces");
+        return ret;
+    }
+
     m_surface = SDL_GetWindowSurface(m_window->Get());
 
     if(!m_surface)
@@ -61,6 +72,13 @@ bool App::Init()
     if(!m_eventManager)
     {
         ERR("Error created Event Manager.");
+        return ret;
+    }
+
+    if(!LoadImages())
+    {
+        ERR("Error loading Images");
+        return ret;
     }
 
     ret = true;
@@ -79,19 +97,13 @@ void App::Update()
 
 void App::Render()
 {
-    std::string getSeconds = GetDateAndTime();
-    getSeconds = getSeconds.substr(17,19);
-    
-    int num = stoi(getSeconds);
-    int R = num >> 0;
-    int G = num >> 1;
-    int B = num >> 2;
-    SDL_FillRect(m_surface, nullptr, SDL_MapRGB(m_surface->format, R, G, B));
+    SDL_FillRect(m_surface, nullptr, SDL_MapRGB(m_surface->format, 0x3F, 0xF1, 0xAB));
+    SDL_BlitSurface(m_imageSurface, NULL, m_surface, NULL);
 }
 
 void App::CleanUp()
 {
-
+    
 }
 
 bool App::AppShouldQuit()
@@ -118,3 +130,4 @@ void App::Run()
 
     CleanUp();
 }
+

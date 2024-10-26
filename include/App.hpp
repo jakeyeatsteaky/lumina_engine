@@ -6,6 +6,7 @@
 
 #include "Window.hpp"
 #include "EventManager.hpp"
+#include "Renderer.hpp"
 
 class SDLInit
 {
@@ -25,7 +26,7 @@ public:
     void Run();
 private:
     SDLInit m_sdlInit;
-    
+
     bool Init();
     void Input();
     void Update();
@@ -35,9 +36,7 @@ private:
 
     std::unique_ptr<Window> m_window;
     std::unique_ptr<EventManager> m_eventManager;
-
-    // temporary members
-    SDL_Surface* m_surface;
+    std::unique_ptr<Renderer> m_renderer;
 
 };
 

@@ -20,5 +20,12 @@ void EventManager::Poll()
     {
         if(m_event.type == SDL_QUIT)
             m_quit = true;
+        if(m_event.type == SDL_KEYDOWN)
+        {
+            if(m_event.key.keysym.sym == SDLK_ESCAPE)
+                m_quit = true;
+            if(m_event.key.keysym.sym == SDLK_KP_ENTER)
+                printf("WADDUP\n");
+        }
     }
 }
