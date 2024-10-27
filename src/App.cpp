@@ -1,6 +1,7 @@
 #include "App.hpp"
 #include "Logger.hpp"
 #include "Utility.hpp"
+#include "Renderer.hpp"
 
 SDLInit::SDLInit() : initError(-1)
 {
@@ -21,9 +22,7 @@ SDLInit::~SDLInit()
 
 App::App() :    m_window(nullptr), 
                 m_eventManager(nullptr),
-                m_renderer(nullptr),
-                m_surface(nullptr), 
-                m_imageSurface(nullptr)
+                m_renderer(nullptr)
 {
     LOG_("Created App");
 }
@@ -42,7 +41,7 @@ bool App::Init()
         return ret;
     }
     
-    m_window = std::make_unique<Window>();
+    m_window = std::make_shared<Window>();
     if(!m_window)
     {
         ERR("Error Creating Window object");
@@ -52,19 +51,10 @@ bool App::Init()
     if(!m_window->m_initialized)
         return ret;
 
-
-    m_renderer = std::make_unique<Renderer>();
-    if(!m_renderer->Load())
+    m_renderer = std::make_unique<Renderer>(*m_window->GetSurface());
+    if(!m_renderer->load())
     {
         ERR("Error loading surfaces");
-        return ret;
-    }
-
-    m_surface = SDL_GetWindowSurface(m_window->Get());
-
-    if(!m_surface)
-    {
-        ERR("Error assigning surface to window.");
         return ret;
     }
 
@@ -72,12 +62,6 @@ bool App::Init()
     if(!m_eventManager)
     {
         ERR("Error created Event Manager.");
-        return ret;
-    }
-
-    if(!LoadImages())
-    {
-        ERR("Error loading Images");
         return ret;
     }
 
@@ -97,8 +81,8 @@ void App::Update()
 
 void App::Render()
 {
-    SDL_FillRect(m_surface, nullptr, SDL_MapRGB(m_surface->format, 0x3F, 0xF1, 0xAB));
-    SDL_BlitSurface(m_imageSurface, NULL, m_surface, NULL);
+    m_renderer->render();
+    m_window->render();
 }
 
 void App::CleanUp()

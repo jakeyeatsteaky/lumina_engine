@@ -34,7 +34,7 @@ private:
     void CleanUp();
     bool AppShouldQuit();
 
-    std::unique_ptr<Window> m_window;
+    std::shared_ptr<Window> m_window;
     std::unique_ptr<EventManager> m_eventManager;
     std::unique_ptr<Renderer> m_renderer;
 

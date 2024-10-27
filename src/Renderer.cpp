@@ -2,37 +2,38 @@
 #include "Renderer.hpp"
 #include "Logger.hpp"
 
-Renderer::Renderer()
+Renderer::Renderer(const SDL_Surface& windowSurface) : 
+            m_windowSurface(windowSurface),
+            m_activeSurface(nullptr)
 {
     LOG_("Successfully created Renderer");
     
-    m_pathsToSurfaces = 
-    {
-        "../moois.bmp",
-        "../1.bmp",
-        "../2.bmp",
-        "../3.bmp"
+    m_pathsToSurfaces = {
+        "../assets/moois.bmp",
+        "../assets/1.bmp",
+        "../assets/2.bmp",
+        "../assets/3.bmp"
     };
 }
 
 Renderer::~Renderer()
 {
-    Clean();
+    cleanUp();
 }
 
-void Renderer::Clean()
+void Renderer::cleanUp()
 {
-    int numSurfaces = (int)m_surfaces.size();
+    int numSurfaces = (int)m_imageSurfaces.size();
 
     LOG_("Destroying %d image surfaces", numSurfaces);
     for(int i = 0; i < numSurfaces; i++)
     {
-        SDL_FreeSurface(m_surfaces[i]);
-        m_surfaces[i] = nullptr;
+        SDL_FreeSurface(m_imageSurfaces[i]);
+        m_imageSurfaces[i] = nullptr;
     }
 }
 
-bool Renderer::Load()
+bool Renderer::load()
 {
     bool success = true;
     int numSurfaces = (int)m_pathsToSurfaces.size();
@@ -40,7 +41,7 @@ bool Renderer::Load()
     LOG_("Creating %d image surfaces", numSurfaces);
     for(int i = 0; i < numSurfaces; i++)
     {
-        SDL_Surface* nextSurface = SDL_LoadBMP(m_pathsToSurfaces[i]);
+        SDL_Surface* nextSurface = SDL_LoadBMP(m_pathsToSurfaces[i].c_str());
         if(!nextSurface)
         {
             ERR("Failed to load the SDL Image. Error: %s\n", SDL_GetError());
@@ -49,27 +50,13 @@ bool Renderer::Load()
         }
         else
         {
-            m_surfaces.push_back();
+            m_imageSurfaces.push_back(nextSurface);
         }
-
     }
+    return success;
 }
 
-bool App::LoadImages()
+void Renderer::render()
 {
-    bool success = true;
-
-    m_imageSurface = SDL_LoadBMP("../assets/moois.bmp");
-
-    if(m_imageSurface == nullptr)
-    {
-        ERR("Failed to load the SDL Image.  Error: %s", SDL_GetError());
-        success = false;
-    }
-    else
-    {
-        LOG("Loaded all assets successfully");
-    }
-
-    return success;
+    SDL_BlitSurface(m_activeSurface, NULL, const_cast<SDL_Surface*>(&m_windowSurface), NULL);
 }
