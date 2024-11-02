@@ -51,7 +51,7 @@ bool App::Init()
     if(!m_window->m_initialized)
         return ret;
 
-    m_renderer = std::make_unique<Renderer>(*m_window->GetSurface());
+    m_renderer = std::make_unique<Renderer>(*m_window);
     if(!m_renderer->load())
     {
         ERR("Error loading surfaces");
@@ -65,6 +65,8 @@ bool App::Init()
         return ret;
     }
 
+    AddCallbacks();
+
     ret = true;
     return ret;
 }
@@ -76,13 +78,15 @@ void App::Input()
 
 void App::Update()
 {
-    m_window->update();
+    
 }
 
 void App::Render()
 {
+    m_renderer->clear();
+    // more render calls here?
+
     m_renderer->render();
-    m_window->render();
 }
 
 void App::CleanUp()
@@ -92,7 +96,7 @@ void App::CleanUp()
 
 bool App::AppShouldQuit()
 {
-    return m_eventManager->m_quit;
+    return m_shouldQuit;
 }
 
 void App::Run()
@@ -103,6 +107,7 @@ void App::Run()
         return;
     }
 
+    LOG("App successfully initialized.  Start Lumina Up and Running");
     while(!AppShouldQuit())
     {
         Input();
@@ -115,3 +120,38 @@ void App::Run()
     CleanUp();
 }
 
+void App::AddCallbacks()
+{
+    m_eventManager->addEventListener(
+        [this](const SDL_Event& event) {
+            handleEvent(event);
+        }
+    );
+
+    m_eventManager->addEventListener(
+        [this](const SDL_Event& event) {
+        if(m_renderer)
+            m_renderer->handleEvent(event);
+        }
+    );
+
+    m_eventManager->addEventListener(
+        [this](const SDL_Event& event){
+        if(m_window)
+            m_window->handleEvent(event);
+        }
+    );
+
+}
+
+void App::handleEvent(const SDL_Event& event)
+{
+     if(event.type == SDL_QUIT)
+            m_shouldQuit = true;
+
+    if(event.type == SDL_KEYDOWN)
+    {
+        if(event.key.keysym.sym == SDLK_ESCAPE)
+            m_shouldQuit = true;
+    }
+}

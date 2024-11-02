@@ -41,21 +41,6 @@ bool Window::Init()
     return true;
 }
 
-void Window::update()
-{    
-    SDL_FillRect(m_windowSurface.get(), 
-                    nullptr, 
-                    SDL_MapRGB(m_windowSurface.get()->format, 
-                    0x3F, 
-                    0xF1, 
-                    0xAB));
-}
-
-void Window::render()
-{
-    SDL_UpdateWindowSurface(Get());
-}
-
 SDL_Window* Window::Get()
 {
     return m_SDLWindow.get();
@@ -64,5 +49,11 @@ SDL_Window* Window::Get()
 SDL_Surface* Window::GetSurface()
 {
     return m_windowSurface.get();
+}
+
+void Window::handleEvent(const SDL_Event& event)
+{
+    if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_KP_ENTER)
+        printf("WADDUP\n");
 }
 

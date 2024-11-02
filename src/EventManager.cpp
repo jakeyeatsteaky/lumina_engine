@@ -16,16 +16,17 @@ EventManager::~EventManager()
 
 void EventManager::Poll()
 {
-    while(SDL_PollEvent(&m_event))
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
     {
-        if(m_event.type == SDL_QUIT)
-            m_quit = true;
-        if(m_event.type == SDL_KEYDOWN)
+        for(auto& callback : m_callbacks)
         {
-            if(m_event.key.keysym.sym == SDLK_ESCAPE)
-                m_quit = true;
-            if(m_event.key.keysym.sym == SDLK_KP_ENTER)
-                printf("WADDUP\n");
+            callback(event);
         }
     }
+}
+
+void EventManager::addEventListener(EventCallback callback)
+{
+    m_callbacks.push_back(callback);
 }

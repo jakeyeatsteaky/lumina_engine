@@ -17,7 +17,7 @@ public:
     friend class App;
 };
 
-class App
+class App : Listener
 {
 public: 
     App();
@@ -33,10 +33,17 @@ private:
     void Render();
     void CleanUp();
     bool AppShouldQuit();
+    void AddCallbacks();
+    
+    virtual void handleEvent(const SDL_Event& event) override;
 
     std::shared_ptr<Window> m_window;
     std::unique_ptr<EventManager> m_eventManager;
     std::unique_ptr<Renderer> m_renderer;
+
+    bool m_shouldQuit = false;
+
+
 
 };
 
