@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
+
 if(POLICY CMP0072)
-    cmake_policy(SET CMP0072 NEW)  # Prefer GLVND
+    cmake_policy(SET CMP0072 NEW)  # Prefer GLVND for OpenGL
 endif()
 
 set(project_name lumina)
@@ -21,18 +22,39 @@ endif()
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 
 # Including directories
-
-message(STATUS "Local Include Directories: ${PROJECT_SOURCE_DIR}/include")
-message(STATUS "SDL2 Include Directories: ${SDL2_INCLUDE_DIRS}")
 include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${SDL2_INCLUDE_DIRS} )
+
+# Find required packages
 find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
+find_package(SDL2_mixer REQUIRED)
 find_package(OpenGL REQUIRED)
-#find_package(Vulkan REQUIRED)
 
+# SDL and other dependencies
+message(STATUS "SDL2 Include Directories: ${SDL2_INCLUDE_DIRS}")
+message(STATUS "SDL2: ${SDL2_LIBRARIES}")
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIRS})
 
+# Source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 file(GLOB_RECURSE HEADERS "include/*.hpp" "include/*.h")
 
-add_executable(lumina main.cpp ${SOURCES} ${HEADERS})
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} OpenGL::GL)
+# Create executable
+add_executable(${project_name} main.cpp ${SOURCES} ${HEADERS})
+
+# Link libraries to the target
+# target_link_libraries(${project_name} 
+#     ${SDL2_LIBRARIES} 
+#     ${SDL2_IMAGE_LIBRARIES}
+#     ${SDL2_TTF_LIBRARIES}
+#     ${SDL2_MIXER_LIBRARIES}
+#     OpenGL::GL
+# )
+target_link_libraries(${project_name}
+    ${SDL2_LIBRARIES}
+    -lSDL2_image
+    -lSDL2_ttf
+    -lSDL2_mixer
+    -lGL
+)

@@ -13,17 +13,19 @@ class SDLInit
     SDLInit();
     ~SDLInit();
     int initError;
+
 public:
     friend class App;
 };
 
 class App : Listener
 {
-public: 
+public:
     App();
     ~App();
 
     void Run();
+
 private:
     SDLInit m_sdlInit;
 
@@ -34,17 +36,14 @@ private:
     void CleanUp();
     bool AppShouldQuit();
     void AddCallbacks();
-    
-    virtual void handleEvent(const SDL_Event& event) override;
+
+    virtual void handleEvent(const SDL_Event &event) override;
 
     std::shared_ptr<Window> m_window;
     std::unique_ptr<EventManager> m_eventManager;
     std::unique_ptr<Renderer> m_renderer;
 
     bool m_shouldQuit = false;
-
-
-
 };
 
 #endif

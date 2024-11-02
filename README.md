@@ -13,8 +13,8 @@ TODO:
     
     [x] Lazy Foo Tut 3: Event Driven Programming
 
-    [ ] Lazy Foo Tut 4: Key Presses
-        [ ] Not really following the tutorial here but the jist is:
+    [x] Lazy Foo Tut 4: Key Presses
+        [x] Not really following the tutorial here but the jist is:
                 - Load a different surface based on a key press
         [x] Implement Renderer Class to house surfaces
     

@@ -1,12 +1,14 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "Renderer.hpp"
 #include "Logger.hpp"
 
 Renderer::Renderer(Window& appWindow) : 
             m_activeSurface(nullptr),
-            m_appWindow(appWindow)
+            m_SDLRenderer(nullptr, SDL_DestroyRenderer),
+            m_appWindow(appWindow),
+            m_initialized(false)
 {
-    LOG_("Successfully created Renderer");
     
     m_pathsToSurfaces = {
         "../assets/moois.bmp",
@@ -14,6 +16,39 @@ Renderer::Renderer(Window& appWindow) :
         "../assets/2.bmp",
         "../assets/3.bmp"
     };
+
+int numDrivers = SDL_GetNumRenderDrivers();
+for (int i = 0; i < numDrivers; ++i) {
+    SDL_RendererInfo info;
+    if (SDL_GetRenderDriverInfo(i, &info) == 0) {
+        LOG_("Renderer Driver Available: ", info.name);
+    }
+}
+
+    SDL_Renderer* renderer = nullptr;
+    SDL_Window* sdlWindow = m_appWindow.Get();
+    renderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED);
+
+    if(!renderer)
+    {
+        ERR("Unable to create SDL Renderer");
+        return;
+    }
+
+    m_SDLRenderer.reset(renderer);
+
+    SDL_SetRenderDrawColor(m_SDLRenderer.get(), 0xf3,0xff, 0xa3, 0xFF);
+
+    int imgFlags = IMG_INIT_PNG;
+    if(!(IMG_Init(imgFlags) & imgFlags))
+    {
+        ERR("SDL_image could not be initialized.  Error: ", SDL_GetError());
+        return;
+    }
+
+    m_initialized = true;
+    LOG_("Successfully created Renderer");
+
 }
 
 Renderer::~Renderer()
@@ -25,7 +60,7 @@ void Renderer::cleanUp()
 {
     int numSurfaces = (int)m_imageSurfaces.size();
 
-    LOG_("Destroying %d image surfaces", numSurfaces);
+    LOG_("Destroying image surfaces: ", numSurfaces);
     for(int i = 0; i < numSurfaces; i++)
     {
         SDL_FreeSurface(m_imageSurfaces[i]);
