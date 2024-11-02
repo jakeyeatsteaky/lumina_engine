@@ -18,8 +18,15 @@ TODO:
                 - Load a different surface based on a key press
         [x] Implement Renderer Class to house surfaces
     
+----> START HERE <-----
     [ ] Finish Implementing the Renderer
+        [ ] Get SDL Renderer to work
+        [ ] Update UML Diagram
 
     [ ] Continue SDL Tutorial to a natural stopping point
 
     [ ] Start openGL implementation for 3D
+
+    link to UML Diagram (it needs to be updated)
+    https://lucid.app/lucidchart/e71e05bc-08d5-4a87-a1c4-0ee38db73369/edit?beaconFlowId=D0AB4986C3F7A3E2&invitationId=inv_b95258fb-0dd8-4b5d-a2c7-c25f1c875809&page=HWEp-vi-RSFO#
+    
