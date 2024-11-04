@@ -1,7 +1,9 @@
 #include "Window.hpp"
 #include "Logger.hpp"
 
-Window::Window() : m_SDLWindow(nullptr, SDL_DestroyWindow), m_initialized(false)
+Window::Window() :  m_SDLWindow(nullptr, SDL_DestroyWindow),
+                    m_windowSurface(nullptr, SDL_FreeSurface),
+                    m_initialized(false)
 {
     m_initialized = Init();
     LOG_("Created Window");
@@ -25,16 +27,33 @@ bool Window::Init()
             return false;
     }
     m_SDLWindow.reset(window);
-    return true;
-}
 
-void Window::update()
-{
-    SDL_UpdateWindowSurface(Get());
+    SDL_Surface* surface = SDL_GetWindowSurface(m_SDLWindow.get());
+
+    if(!surface)
+    {
+        ERR("Failed to create sdl window surface. Error: %s\n", SDL_GetError());
+        return false;
+    }
+
+    m_windowSurface.reset(surface);
+
+    return true;
 }
 
 SDL_Window* Window::Get()
 {
     return m_SDLWindow.get();
+}
+
+SDL_Surface* Window::GetSurface()
+{
+    return m_windowSurface.get();
+}
+
+void Window::handleEvent(const SDL_Event& event)
+{
+    if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_KP_ENTER)
+        printf("WADDUP\n");
 }
 

@@ -1,6 +1,7 @@
 #include "App.hpp"
 #include "Logger.hpp"
 #include "Utility.hpp"
+#include "Renderer.hpp"
 
 SDLInit::SDLInit() : initError(-1)
 {
@@ -19,7 +20,9 @@ SDLInit::~SDLInit()
     SDL_Quit();
 }
 
-App::App() : m_window(nullptr), m_surface(nullptr)
+App::App() :    m_window(nullptr), 
+                m_eventManager(nullptr),
+                m_renderer(nullptr)
 {
     LOG_("Created App");
 }
@@ -38,7 +41,7 @@ bool App::Init()
         return ret;
     }
     
-    m_window = std::make_unique<Window>();
+    m_window = std::make_shared<Window>();
     if(!m_window)
     {
         ERR("Error Creating Window object");
@@ -48,12 +51,10 @@ bool App::Init()
     if(!m_window->m_initialized)
         return ret;
 
-
-    m_surface = SDL_GetWindowSurface(m_window->Get());
-
-    if(!m_surface)
+    m_renderer = std::make_unique<Renderer>(*m_window);
+    if(!m_renderer->load())
     {
-        ERR("Error assigning surface to window.");
+        ERR("Error loading surfaces");
         return ret;
     }
 
@@ -61,7 +62,10 @@ bool App::Init()
     if(!m_eventManager)
     {
         ERR("Error created Event Manager.");
+        return ret;
     }
+
+    AddCallbacks();
 
     ret = true;
     return ret;
@@ -74,29 +78,25 @@ void App::Input()
 
 void App::Update()
 {
-    m_window->update();
+    
 }
 
 void App::Render()
 {
-    std::string getSeconds = GetDateAndTime();
-    getSeconds = getSeconds.substr(17,19);
-    
-    int num = stoi(getSeconds);
-    int R = num >> 0;
-    int G = num >> 1;
-    int B = num >> 2;
-    SDL_FillRect(m_surface, nullptr, SDL_MapRGB(m_surface->format, R, G, B));
+    m_renderer->clear();
+    // more render calls here?
+
+    m_renderer->render();
 }
 
 void App::CleanUp()
 {
-
+    
 }
 
 bool App::AppShouldQuit()
 {
-    return m_eventManager->m_quit;
+    return m_shouldQuit;
 }
 
 void App::Run()
@@ -107,6 +107,7 @@ void App::Run()
         return;
     }
 
+    LOG("App successfully initialized.  Start Lumina Up and Running");
     while(!AppShouldQuit())
     {
         Input();
@@ -117,4 +118,40 @@ void App::Run()
     }
 
     CleanUp();
+}
+
+void App::AddCallbacks()
+{
+    m_eventManager->addEventListener(
+        [this](const SDL_Event& event) {
+            handleEvent(event);
+        }
+    );
+
+    m_eventManager->addEventListener(
+        [this](const SDL_Event& event) {
+        if(m_renderer)
+            m_renderer->handleEvent(event);
+        }
+    );
+
+    m_eventManager->addEventListener(
+        [this](const SDL_Event& event){
+        if(m_window)
+            m_window->handleEvent(event);
+        }
+    );
+
+}
+
+void App::handleEvent(const SDL_Event& event)
+{
+     if(event.type == SDL_QUIT)
+            m_shouldQuit = true;
+
+    if(event.type == SDL_KEYDOWN)
+    {
+        if(event.key.keysym.sym == SDLK_ESCAPE)
+            m_shouldQuit = true;
+    }
 }

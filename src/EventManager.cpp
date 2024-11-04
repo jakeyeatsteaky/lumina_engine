@@ -16,9 +16,17 @@ EventManager::~EventManager()
 
 void EventManager::Poll()
 {
-    while(SDL_PollEvent(&m_event))
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
     {
-        if(m_event.type == SDL_QUIT)
-            m_quit = true;
+        for(auto& callback : m_callbacks)
+        {
+            callback(event);
+        }
     }
+}
+
+void EventManager::addEventListener(EventCallback callback)
+{
+    m_callbacks.push_back(callback);
 }
