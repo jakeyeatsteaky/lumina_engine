@@ -28,16 +28,6 @@ bool Window::Init()
     }
     m_SDLWindow.reset(window);
 
-    SDL_Surface* surface = SDL_GetWindowSurface(m_SDLWindow.get());
-
-    if(!surface)
-    {
-        ERR("Failed to create sdl window surface. Error: %s\n", SDL_GetError());
-        return false;
-    }
-
-    m_windowSurface.reset(surface);
-
     return true;
 }
 

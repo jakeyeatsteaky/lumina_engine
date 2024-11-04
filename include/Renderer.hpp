@@ -10,11 +10,13 @@
 #include "Window.hpp"
 #include "Listener.hpp"
 
+class SDL_IMGInit
+{
+
+};
+
 class Renderer : public Listener
 {
-    std::vector<SDL_Surface*> m_imageSurfaces;
-    std::array<std::string, 4> m_pathsToSurfaces;
-    SDL_Surface* m_activeSurface;
     std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> m_SDLRenderer;
     Window& m_appWindow;
     bool m_initialized;
@@ -24,11 +26,10 @@ public:
     Renderer(Window& appWindow);
     ~Renderer();
 
-    bool load();
+    bool loadTextures();
     void cleanUp();
     void clear();
     void render();
-    void updateActiveSurface(int idx);
 
     virtual void handleEvent(const SDL_Event& event) override;
 };
