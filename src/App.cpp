@@ -52,7 +52,7 @@ bool App::Init()
         return ret;
 
     m_renderer = std::make_unique<Renderer>(*m_window);
-    if(!m_renderer->load())
+    if(!m_renderer->loadTextures())
     {
         ERR("Error loading surfaces");
         return ret;

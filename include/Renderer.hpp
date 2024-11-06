@@ -26,6 +26,7 @@ public:
     Renderer(Window& appWindow);
     ~Renderer();
 
+    bool init();
     bool loadTextures();
     void cleanUp();
     void clear();

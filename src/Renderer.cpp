@@ -3,25 +3,24 @@
 #include "Renderer.hpp"
 #include "Logger.hpp"
 
-Renderer::Renderer(Window &appWindow) : 
-            m_SDLRenderer(nullptr, SDL_DestroyRenderer),
-            m_appWindow(appWindow),
-            m_initialized(false)
+Renderer::Renderer(Window &appWindow) : m_SDLRenderer(nullptr, SDL_DestroyRenderer),
+                                        m_appWindow(appWindow),
+                                        m_initialized(false)
 {
 
-    int numDrivers = SDL_GetNumRenderDrivers();
-    for (int i = 0; i < numDrivers; ++i)
-    {
-        SDL_RendererInfo info;
-        if (SDL_GetRenderDriverInfo(i, &info) == 0)
-        {
-            LOG_("Renderer Driver Available: ", info.name);
-        }
-    }
+    // int numDrivers = SDL_GetNumRenderDrivers();
+    // for (int i = 0; i < numDrivers; ++i)
+    // {
+    //     // SDL_RendererInfo info;
+    //     // if (SDL_GetRenderDriverInfo(i, &info) == 0)
+    //     // {
+    //     //     LOG_("Renderer Driver Available: ", info.name);
+    //     // }
+    // }
 
     SDL_Renderer *renderer = nullptr;
     SDL_Window *sdlWindow = m_appWindow.Get();
-    renderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED /* | SDL_REDERER_PRESENTVSYNC */);
 
     if (!renderer)
     {
@@ -56,10 +55,9 @@ Renderer::~Renderer()
 
 void Renderer::cleanUp()
 {
-
 }
 
-bool Renderer::load()
+bool Renderer::loadTextures()
 {
     bool success = true;
 
@@ -68,20 +66,22 @@ bool Renderer::load()
 
 void Renderer::clear()
 {
-
 }
 
 void Renderer::render()
 {
-    SDL_SetRenderDrawColor(m_SDLRenderer.get(), 0xf3, 0xff, 0xa3, 0xFF);
+    SDL_SetRenderDrawColor(m_SDLRenderer.get(), 0x03, 0xff, 0x3a, 0xFF);
+    SDL_RenderClear(m_SDLRenderer.get());
+
     // Perform rendering operations
     // ...
 
+    IMG_Load("../assets/images/spider.png")
+
     // Update the window surface after rendering
-    SDL_UpdateWindowSurface(m_appWindow.Get());
+    SDL_RenderPresent(m_SDLRenderer.get());
 }
 
-void Renderer::handleEvent(const SDL_Event &event)
+void Renderer::handleEvent(const SDL_Event & /*event*/)
 {
-
 }
