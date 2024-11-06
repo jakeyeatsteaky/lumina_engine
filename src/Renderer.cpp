@@ -76,8 +76,17 @@ void Renderer::render()
     // Perform rendering operations
     // ...
 
-    IMG_Load("../assets/images/spider.png")
+    SDL_Surface* surface = IMG_Load("../assets/pngs/black_cat_sprite_sheet.png");
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_SDLRenderer.get(), surface);
+    SDL_FreeSurface(surface);
 
+    SDL_Rect src = {10,33,11,35};
+
+    SDL_Rect dst = {100, 100, 110, 350};
+
+    SDL_RenderCopy(m_SDLRenderer.get(), texture, &src, &dst);
+
+    SDL_DestroyTexture(texture);
     // Update the window surface after rendering
     SDL_RenderPresent(m_SDLRenderer.get());
 }
