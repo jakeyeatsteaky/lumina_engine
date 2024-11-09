@@ -58,3 +58,8 @@ void Window::handleEvent(const SDL_Event& event)
         printf("WADDUP\n");
 }
 
+void Window::handleDeltaTime(const double& /*dt*/)
+{
+    // doesnt need to implement this
+    ERR(__FUNCTION__, " shouldnt be getting called");
+}

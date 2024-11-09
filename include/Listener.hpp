@@ -9,6 +9,7 @@ class Listener
 public:
     virtual ~Listener() {LOG("Listener being destroyed");};
     virtual void handleEvent(const SDL_Event& event) = 0;
+    virtual void handleDeltaTime(const double& dt) = 0;
 };
 
 #endif//

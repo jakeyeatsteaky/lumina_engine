@@ -5,6 +5,18 @@ TODO:
     [ ] Transitioning away from the SDL lazyfoo tutorial and working
         on Pikuma tutorial
 
+        _____ START HERE______
+        [ ] Pikuma: Uncapped framerate chapter is next
+        [ ] Get back to where you left off
+            [x] implement delta time
+            [ ] clean up delta time stuff (print message)
+
+        [ ] Networking layer maybe? - basic client server tcp/udp transfering
+            once I get to the sprites being animated, I want to created
+            a networked app which will just use a click to spawn a moving cat
+
+            this will run on two diff computers over a network and will update the cats on both sides
+
     [ ] Update UML Diagram
 
     link to UML Diagram (it needs to be updated)

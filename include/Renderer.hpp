@@ -20,6 +20,7 @@ class Renderer : public Listener
     std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> m_SDLRenderer;
     Window& m_appWindow;
     bool m_initialized;
+    double m_dt;
 
 public:
     Renderer() = delete;
@@ -33,6 +34,7 @@ public:
     void render();
 
     virtual void handleEvent(const SDL_Event& event) override;
+    virtual void handleDeltaTime(const double& dt) override;
 };
 
 #endif // end renderer hpp

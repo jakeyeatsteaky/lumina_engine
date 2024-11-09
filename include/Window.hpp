@@ -22,6 +22,7 @@ public:
     bool m_initialized;
 
     virtual void handleEvent(const SDL_Event& event) override;
+    virtual void handleDeltaTime(const double& dt) override;
 };
 
 #endif // end window_hpp

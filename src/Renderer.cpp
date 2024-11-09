@@ -1,23 +1,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <glm/glm.hpp>
 #include "Renderer.hpp"
 #include "Logger.hpp"
 
 Renderer::Renderer(Window &appWindow) : m_SDLRenderer(nullptr, SDL_DestroyRenderer),
                                         m_appWindow(appWindow),
-                                        m_initialized(false)
+                                        m_initialized(false),
+                                        m_dt(0.0)
 {
-
-    // int numDrivers = SDL_GetNumRenderDrivers();
-    // for (int i = 0; i < numDrivers; ++i)
-    // {
-    //     // SDL_RendererInfo info;
-    //     // if (SDL_GetRenderDriverInfo(i, &info) == 0)
-    //     // {
-    //     //     LOG_("Renderer Driver Available: ", info.name);
-    //     // }
-    // }
-
     SDL_Renderer *renderer = nullptr;
     SDL_Window *sdlWindow = m_appWindow.Get();
     renderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED /* | SDL_REDERER_PRESENTVSYNC */);
@@ -68,6 +59,13 @@ void Renderer::clear()
 {
 }
 
+constexpr double scale_factor = 4.0;
+float playerX = 10;
+float playerY = 50;
+
+glm::vec2 playerPosition(playerX, playerY);
+glm::vec2 playerVelocity(2.5, 1.0);
+
 void Renderer::render()
 {
     SDL_SetRenderDrawColor(m_SDLRenderer.get(), 0x03, 0xff, 0x3a, 0xFF);
@@ -77,12 +75,36 @@ void Renderer::render()
     // ...
 
     SDL_Surface* surface = IMG_Load("../assets/pngs/black_cat_sprite_sheet.png");
+    if(!surface)
+    {
+        ERR("Failed to create surface: ", SDL_GetError());
+    }
+
     SDL_Texture* texture = SDL_CreateTextureFromSurface(m_SDLRenderer.get(), surface);
+    if(!texture)
+    {
+        ERR("Failed to create texture: ", SDL_GetError());
+    }
+
     SDL_FreeSurface(surface);
 
-    SDL_Rect src = {10,33,11,35};
+    int32_t tex_width = 11;
+    int32_t tex_startX = 10;
+    int32_t tex_height = 35;
+    int32_t tex_startY = 33;
 
-    SDL_Rect dst = {100, 100, 110, 350};
+    SDL_Rect src = {tex_startX, tex_startY, tex_width, tex_height};
+
+    float scaledWidth =  (float)tex_width * scale_factor;
+    float scaledHeight = (float)tex_height * scale_factor;
+
+    playerPosition.x += playerVelocity.x * m_dt;
+    playerPosition.y += playerVelocity.y * m_dt;
+    SDL_Rect dst = {
+                    (int32_t)playerPosition.x, 
+                    (int32_t)playerPosition.y, 
+                    (int32_t)scaledWidth, 
+                    (int32_t)scaledHeight};
 
     SDL_RenderCopy(m_SDLRenderer.get(), texture, &src, &dst);
 
@@ -93,4 +115,10 @@ void Renderer::render()
 
 void Renderer::handleEvent(const SDL_Event & /*event*/)
 {
+}
+
+void Renderer::handleDeltaTime(const double& dt)
+{
+    m_dt = dt;
+    LOG("Renderer:: Dt updated ", dt);
 }
