@@ -186,5 +186,5 @@ void App::handleEvent(const SDL_Event &event)
 void App::handleDeltaTime(const double& dt)
 {
     m_currentSysDt = dt;
-    LOG("App:: Dt updated ", dt);
+    //LOG("\tApp:: Dt updated ");
 }

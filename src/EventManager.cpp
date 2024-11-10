@@ -28,7 +28,7 @@ void EventManager::Poll()
 
 void EventManager::UpdateDeltaTime(const double& dt)
 {
-    LOG("update delta time: ", dt);
+    //LOG("update delta time: ", dt);
     for(const auto& dtcb: m_dtcbs)
     {
         dtcb(dt);

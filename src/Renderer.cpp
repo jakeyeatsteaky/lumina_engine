@@ -42,6 +42,7 @@ bool Renderer::init()
 Renderer::~Renderer()
 {
     cleanUp();
+    LOG("Renderer Cleaned up and destroyed");
 }
 
 void Renderer::cleanUp()
@@ -120,5 +121,5 @@ void Renderer::handleEvent(const SDL_Event & /*event*/)
 void Renderer::handleDeltaTime(const double& dt)
 {
     m_dt = dt;
-    LOG("Renderer:: Dt updated ", dt);
+    //LOG("\tRenderer:: Dt updated");
 }
