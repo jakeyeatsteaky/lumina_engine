@@ -1,0 +1,16 @@
+Basic ECS Design:
+
+    - Entitys:
+        - Player, enemy, anything which houses some data.  
+        - Doesnt need a graphical representation:
+            - for example, a door trigger event could be an entity which just has a collider
+
+    - Components:
+        - Collider, transform, Mesh renderer
+        - Things you add to entities to make them logical
+
+    - An entity has a list of components.  When you call Entity::Update() it iterates
+        through all the components and calls their Component::update() (virtual) functions
+        Same with rendering
+
+    - Entities need to register with some system that governs them.  probably the app class
