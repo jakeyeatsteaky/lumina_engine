@@ -38,12 +38,14 @@ private:
     void AddCallbacks();
 
     virtual void handleEvent(const SDL_Event &event) override;
+    virtual void handleDeltaTime(const double& dt) override;
 
     std::shared_ptr<Window> m_window;
     std::unique_ptr<EventManager> m_eventManager;
     std::unique_ptr<Renderer> m_renderer;
 
     bool m_shouldQuit = false;
+    double m_currentSysDt = 0.0;
 };
 
 #endif

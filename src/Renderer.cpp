@@ -1,139 +1,125 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <glm/glm.hpp>
 #include "Renderer.hpp"
 #include "Logger.hpp"
 
-Renderer::Renderer(Window& appWindow) : 
-            m_activeSurface(nullptr),
-            m_SDLRenderer(nullptr, SDL_DestroyRenderer),
-            m_appWindow(appWindow),
-            m_initialized(false)
+Renderer::Renderer(Window &appWindow) : m_SDLRenderer(nullptr, SDL_DestroyRenderer),
+                                        m_appWindow(appWindow),
+                                        m_initialized(false),
+                                        m_dt(0.0)
 {
-    
-    m_pathsToSurfaces = {
-        "../assets/moois.bmp",
-        "../assets/1.bmp",
-        "../assets/2.bmp",
-        "../assets/3.bmp"
-    };
+    SDL_Renderer *renderer = nullptr;
+    SDL_Window *sdlWindow = m_appWindow.Get();
+    renderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED /* | SDL_REDERER_PRESENTVSYNC */);
 
-int numDrivers = SDL_GetNumRenderDrivers();
-for (int i = 0; i < numDrivers; ++i) {
-    SDL_RendererInfo info;
-    if (SDL_GetRenderDriverInfo(i, &info) == 0) {
-        LOG_("Renderer Driver Available: ", info.name);
-    }
-}
-
-    SDL_Renderer* renderer = nullptr;
-    SDL_Window* sdlWindow = m_appWindow.Get();
-    renderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED);
-
-    if(!renderer)
+    if (!renderer)
     {
-        ERR("Unable to create SDL Renderer");
+        ERR("Unable to create SDL Renderer. Error: ", SDL_GetError());
         return;
     }
 
     m_SDLRenderer.reset(renderer);
 
-    SDL_SetRenderDrawColor(m_SDLRenderer.get(), 0xf3,0xff, 0xa3, 0xFF);
-
     int imgFlags = IMG_INIT_PNG;
-    if(!(IMG_Init(imgFlags) & imgFlags))
+    if (!(IMG_Init(imgFlags) & imgFlags))
     {
-        ERR("SDL_image could not be initialized.  Error: ", SDL_GetError());
+        ERR("SDL_image could not be initialized.  Error: ", IMG_GetError());
         return;
     }
 
     m_initialized = true;
     LOG_("Successfully created Renderer");
+}
 
+bool Renderer::init()
+{
+    bool ret = false;
+
+    return ret;
 }
 
 Renderer::~Renderer()
 {
     cleanUp();
+    LOG("Renderer Cleaned up and destroyed");
 }
 
 void Renderer::cleanUp()
 {
-    int numSurfaces = (int)m_imageSurfaces.size();
-
-    LOG_("Destroying image surfaces: ", numSurfaces);
-    for(int i = 0; i < numSurfaces; i++)
-    {
-        SDL_FreeSurface(m_imageSurfaces[i]);
-        m_imageSurfaces[i] = nullptr;
-    }
 }
 
-bool Renderer::load()
+bool Renderer::loadTextures()
 {
     bool success = true;
-    int numSurfaces = (int)m_pathsToSurfaces.size();
 
-    LOG_("Creating image surfaces: ", numSurfaces);
-    for(int i = 0; i < numSurfaces; i++)
-    {
-        SDL_Surface* nextSurface = SDL_LoadBMP(m_pathsToSurfaces[i].c_str());
-        if(!nextSurface)
-        {
-            ERR("Failed to load the SDL Image. Error: %s\n", SDL_GetError());
-            success = false;
-            continue;
-        }
-        else
-        {
-            m_imageSurfaces.push_back(nextSurface);
-        }
-    }
-
-    // initialize active surface
-    m_activeSurface = m_imageSurfaces.at(0);
     return success;
 }
 
 void Renderer::clear()
 {
-    SDL_Surface* surface = m_appWindow.GetSurface();
-    SDL_FillRect(surface, nullptr, SDL_MapRGB(surface->format, 0xFF, 0xF1, 0xAB));
 }
+
+constexpr double scale_factor = 4.0;
+float playerX = 10;
+float playerY = 50;
+
+glm::vec2 playerPosition(playerX, playerY);
+glm::vec2 playerVelocity(2.5, 1.0);
 
 void Renderer::render()
 {
-    SDL_Surface* windowSurface = m_appWindow.GetSurface();
-    SDL_BlitSurface(m_activeSurface, NULL, const_cast<SDL_Surface*>(windowSurface), NULL);
+    SDL_SetRenderDrawColor(m_SDLRenderer.get(), 0x03, 0xff, 0x3a, 0xFF);
+    SDL_RenderClear(m_SDLRenderer.get());
 
     // Perform rendering operations
     // ...
 
+    SDL_Surface* surface = IMG_Load("../assets/pngs/black_cat_sprite_sheet.png");
+    if(!surface)
+    {
+        ERR("Failed to create surface: ", SDL_GetError());
+    }
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_SDLRenderer.get(), surface);
+    if(!texture)
+    {
+        ERR("Failed to create texture: ", SDL_GetError());
+    }
+
+    SDL_FreeSurface(surface);
+
+    int32_t tex_width = 11;
+    int32_t tex_startX = 10;
+    int32_t tex_height = 35;
+    int32_t tex_startY = 33;
+
+    SDL_Rect src = {tex_startX, tex_startY, tex_width, tex_height};
+
+    float scaledWidth =  (float)tex_width * scale_factor;
+    float scaledHeight = (float)tex_height * scale_factor;
+
+    playerPosition.x += playerVelocity.x * m_dt;
+    playerPosition.y += playerVelocity.y * m_dt;
+    SDL_Rect dst = {
+                    (int32_t)playerPosition.x, 
+                    (int32_t)playerPosition.y, 
+                    (int32_t)scaledWidth, 
+                    (int32_t)scaledHeight};
+
+    SDL_RenderCopy(m_SDLRenderer.get(), texture, &src, &dst);
+
+    SDL_DestroyTexture(texture);
     // Update the window surface after rendering
-    SDL_UpdateWindowSurface(m_appWindow.Get());
+    SDL_RenderPresent(m_SDLRenderer.get());
 }
 
-void Renderer::updateActiveSurface(int idx)
+void Renderer::handleEvent(const SDL_Event & /*event*/)
 {
-    if (idx < 0) 
-        idx = 0;
-    if( idx > (int)m_imageSurfaces.size())
-        idx = (int)m_imageSurfaces.size() - 1; 
-
-    m_activeSurface = m_imageSurfaces[idx];
 }
 
-void Renderer::handleEvent(const SDL_Event& event)
+void Renderer::handleDeltaTime(const double& dt)
 {
-
-    if(event.key.keysym.sym == SDLK_UP)
-        updateActiveSurface(0);
-
-    if(event.key.keysym.sym == SDLK_LEFT)
-        updateActiveSurface(1);
-
-    if(event.key.keysym.sym == SDLK_RIGHT)
-        updateActiveSurface(2);
-    
-    if(event.key.keysym.sym == SDLK_DOWN)
-        updateActiveSurface(3);
+    m_dt = dt;
+    //LOG("\tRenderer:: Dt updated");
 }

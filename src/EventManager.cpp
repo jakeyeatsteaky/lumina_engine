@@ -26,7 +26,21 @@ void EventManager::Poll()
     }
 }
 
+void EventManager::UpdateDeltaTime(const double& dt)
+{
+    //LOG("update delta time: ", dt);
+    for(const auto& dtcb: m_dtcbs)
+    {
+        dtcb(dt);
+    }
+}
+
 void EventManager::addEventListener(EventCallback callback)
 {
     m_callbacks.push_back(callback);
+}
+
+void EventManager::addDeltaTimeEvent(DeltaTimeCallback dtcb)
+{
+    m_dtcbs.push_back(dtcb);
 }

@@ -30,6 +30,7 @@ find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(glm REQUIRED)
 
 # SDL and other dependencies
 message(STATUS "SDL2 Include Directories: ${SDL2_INCLUDE_DIRS}")
@@ -57,4 +58,5 @@ target_link_libraries(${project_name}
     -lSDL2_ttf
     -lSDL2_mixer
     -lGL
+    glm::glm
 )

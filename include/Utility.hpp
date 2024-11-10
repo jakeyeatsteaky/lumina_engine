@@ -5,7 +5,14 @@
 
 namespace util
 {
-    void TimeDelay_ms(uint32_t ms);
+    void TimeDelay_ms(uint32_t ms, bool use_rote = false);
+
 }
 
-#endif //end utility hpp
+namespace core
+{
+    constexpr uint8_t FPS = 240;
+    constexpr int16_t MPF = 1000 / FPS; // milliseconds_per_frame
+}
+
+#endif // end utility hpp

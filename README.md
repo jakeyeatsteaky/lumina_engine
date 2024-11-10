@@ -2,31 +2,29 @@
 3D Renderer Project
 
 TODO:
-    [x] Lazy Foo Tut 2: Getting an Image on the screen
-        [x] Make App class and encapsulate SDL items in to another class
-            [x] Make Window Class
-            [x] Make Event Manager
-            [x] Fix Crash 
-                [x] Put print statements in Window and EventManager constructors.
-                    to see where the crash is happening.
-        [x] Import Logger into project
-    
-    [x] Lazy Foo Tut 3: Event Driven Programming
+    [ ] Transitioning away from the SDL lazyfoo tutorial and working
+        on Pikuma tutorial
 
-    [x] Lazy Foo Tut 4: Key Presses
-        [x] Not really following the tutorial here but the jist is:
-                - Load a different surface based on a key press
-        [x] Implement Renderer Class to house surfaces
-    
-----> START HERE <-----
-    [ ] Finish Implementing the Renderer
-        [ ] Get SDL Renderer to work
-        [ ] Update UML Diagram
+        _____ START HERE______
+        [ ] Pikuma: Uncapped framerate chapter is next
+        [ ] Get back to where you left off
+            [x] implement delta time
+            [ ] clean up delta time stuff (print message)
 
-    [ ] Continue SDL Tutorial to a natural stopping point
+        [ ] Networking layer maybe? - basic client server tcp/udp transfering
+            once I get to the sprites being animated, I want to created
+            a networked app which will just use a click to spawn a moving cat
 
-    [ ] Start openGL implementation for 3D
+            this will run on two diff computers over a network and will update the cats on both sides
+
+    [ ] Update UML Diagram
 
     link to UML Diagram (it needs to be updated)
     https://lucid.app/lucidchart/e71e05bc-08d5-4a87-a1c4-0ee38db73369/edit?beaconFlowId=D0AB4986C3F7A3E2&invitationId=inv_b95258fb-0dd8-4b5d-a2c7-c25f1c875809&page=HWEp-vi-RSFO#
+
+
+
+Assets Credit:
+    Cats:
+        https://pop-shop-packs.itch.io/cats-pixel-asset-pack
     
